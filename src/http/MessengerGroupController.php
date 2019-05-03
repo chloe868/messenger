@@ -126,7 +126,7 @@ class MessengerGroupController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $this->response['data'][$i]['last_message'] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessageSupport($result[$i]['id'], $data['account']);
+          $this->response['data'][$i]['last_message'] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessageSupport($result[$i]['id'], $data['account_id']);
           $i++;
         }
       }
