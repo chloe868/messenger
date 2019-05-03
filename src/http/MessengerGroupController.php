@@ -40,15 +40,17 @@ class MessengerGroupController extends APIController
 
       $result = DB::table('messenger_members as T1')
         ->join('messenger_groups as T2', 'T2.id', '=', 'T1.messenger_group_id')
+        ->join('messenger_messages as T3', 'T3.id', '=', 'T1.messenger_group_id')
         ->where('T1.account_id', '=', $accountId)
         ->where('T2.payload', '!=', 'support')
+        ->orderBy('T3.created_at', 'DESC')
         ->select('T2.*')
         ->get();
       $result = json_decode($result, true);
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $response[] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id']);
+          $response[] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
           $i++;
         }
       }else{

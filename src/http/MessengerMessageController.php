@@ -48,8 +48,14 @@ class MessengerMessageController extends APIController
       return null;
     }
 
-    public function getLastMessage($messengerGroupId){
-      $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->get();
+    public function getLastMessage($messengerGroupId, $accountId = null){
+      $message = '';
+      if($accountId != null){
+        $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->where('account_id', '!=', $accountId)->orderBy('created_at', 'desc')->get(); 
+      }else{
+        $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->get();
+      }
+      
       $response = array(
         'title', 'description', 'date'
       );
