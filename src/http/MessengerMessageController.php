@@ -5,6 +5,7 @@ namespace Increment\Messenger\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Messenger\Models\MessengerMessage;
+use Increment\Messenger\Models\MessengerGroup;
 use Carbon\Carbon;
 use App\Events\Message;
 
@@ -20,6 +21,7 @@ class MessengerMessageController extends APIController
       $data['account'] = $this->retrieveAccountDetails($data['account_id']);
       $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
       broadcast(new Message($data))->toOthers();
+      MessengerGroup::where('id', '=', $dat['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
       return $this->response();
     }
     public function retrieve(Request $request){
