@@ -6,5 +6,5 @@ use App\APIModel;
 class MessengerMessage extends APIModel
 {
     protected $table = 'messenger_messages';
-    protected $fillable = ['messenger_group_id', 'account_id', 'message'];
+    protected $fillable = ['messenger_group_id', 'account_id', 'message', 'status'];
 }
