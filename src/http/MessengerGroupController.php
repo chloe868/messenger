@@ -43,7 +43,6 @@ class MessengerGroupController extends APIController
         ->join('messenger_messages as T3', 'T3.id', '=', 'T1.messenger_group_id')
         ->where('T1.account_id', '=', $accountId)
         ->where('T2.payload', '!=', 'support')
-
         ->orderBy('T3.created_at', 'DESC')
         ->select('T2.*')
         ->get();
