@@ -37,20 +37,22 @@ class MessengerGroupController extends APIController
       $accountType = $data['account_type'];
       $accountId = $data['account_id'];
       $response = array();
+      $totalUnreadMessages = 0;
 
       $result = DB::table('messenger_members as T1')
         ->join('messenger_groups as T2', 'T2.id', '=', 'T1.messenger_group_id')
-        ->join('messenger_messages as T3', 'T3.id', '=', 'T1.messenger_group_id')
         ->where('T1.account_id', '=', $accountId)
         ->where('T2.payload', '!=', 'support')
-        ->orderBy('T3.created_at', 'DESC')
+        ->orderBy('T2.updated_at', 'DESC')
         ->select('T2.*')
         ->get();
       $result = json_decode($result, true);
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $response[] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
+          $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
+          $response[] = $lastMessage;
+          $totalUnreadMessages += $lastMessage['total_unread_messages'];
           $i++;
         }
       }else{
@@ -60,6 +62,7 @@ class MessengerGroupController extends APIController
       return response()->json(array(
         'data'  => $response,
         'error' => null,
+        'total_unread_messages' => $totalUnreadMessages,
         'timestamps'  => Carbon::now()
       ));
     }
@@ -120,16 +123,24 @@ class MessengerGroupController extends APIController
       $data = $request->all();
       $this->model = new MessengerGroup();
       $this->retrieveDB($data);
+      $totalUnreadMessages = 0;
 
       $result = $this->response['data'];
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $this->response['data'][$i]['last_message'] = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessageSupport($result[$i]['id'], $data['account_id']);
+          $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $data['account_id']);
+          $this->response['data'][$i]['last_message'] = $lastMessage;
+          $totalUnreadMessages += $lastMessage['total_unread_messages'];
           $i++;
         }
       }
+      $this->response['total_unread_messages'] = $totalUnreadMessages;
       return $this->response();
+    }
+
+    public function updateGroupById($id){
+      MessengerGroup::where('id', '=', $id)->update(array('updated_at' => Carbon::now()));
     }
 
 }
