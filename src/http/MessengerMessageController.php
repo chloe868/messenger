@@ -25,6 +25,7 @@ class MessengerMessageController extends APIController
       $data['account'] = $this->retrieveAccountDetails($data['account_id']);
       $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
       broadcast(new Message($data))->toOthers();
+      app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
       MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
       return response()->json(array(
         'data' => $data
