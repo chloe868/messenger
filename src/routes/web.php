@@ -39,3 +39,9 @@ Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
+
+// Messenger Message Files
+$route = env('PACKAGE_ROUTE', '').'/audio_calls/';
+$controller = 'Increment\Messenger\Http\AudioCallController@';
+Route::post($route.'send', $controller."send");
+
