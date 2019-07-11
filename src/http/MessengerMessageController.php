@@ -14,6 +14,7 @@ class MessengerMessageController extends APIController
     function __construct(){
       $this->model = new MessengerMessage;
       $this->notRequired = array(
+        'payload_value',
         'status'
       );
     }
@@ -39,12 +40,23 @@ class MessengerMessageController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
+          $payload = $result[$i]['payload'];
+          $payloadValue = $result[$i]['payload_value'];
+          $this->response['data'][$i]['product'] = $this->getMessageByPayload($payload, $payloadValue);
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
           $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y');
           $i++;
         }
       }
       return $this->response();
+    }
+    
+    public function getMessageByPayload($payload, $payloadValue){
+      switch($payload){
+        case 'product': 
+          return app('Increment\Marketplace\Http\ProductController')->getProductById($payloadValue);
+          break;
+      }
     }
 
     public function getLastMessageSupport($messengerGroupId){
@@ -59,12 +71,14 @@ class MessengerMessageController extends APIController
 
     public function getLastMessage($messengerGroupId, $accountId = null){
       $message = '';
+      $lastMessageAccountId = null;
       if($accountId != null){
         $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->where('account_id', '!=', $accountId)->orderBy('created_at', 'desc')->limit(1)->get();
 
         $lastMessage = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
         if(sizeof($message) > 0 && sizeof($lastMessage) > 0){
           $message[0]['message'] = (intval($lastMessage[0]['account_id']) == intval($accountId)) ? 'You: ' .$lastMessage[0]['message'] : $lastMessage[0]['message'];
+          $lastMessageAccountId = $lastMessage[0]['account_id'];
         }
       }else{
         $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
@@ -72,7 +86,7 @@ class MessengerMessageController extends APIController
       
       $response = array();
       if(sizeof($message) > 0){
-        $response['title'] = $this->retrieveAccountDetails($message[0]['account_id']);
+        $response['title'] = $this->retrieveAccountDetails(($lastMessageAccountId !== null) ? $lastMessageAccountId : $message[0]['account_id']);
         $response['description'] = $message[0]['message'];
         $response['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $message[0]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y');
         $response['total_unread_messages'] = $this->getTotalUnreadMessages($messengerGroupId, $accountId);
