@@ -67,6 +67,40 @@ class MessengerGroupController extends APIController
       ));
     }
 
+    public function retrieveSummaryPayhiram(Request $request){
+      $data = $request->all();
+      $accountId = $data['account_id'];
+      $response = array();
+      $totalUnreadMessages = 0;
+
+      $result = DB::table('messenger_members as T1')
+        ->join('messenger_groups as T2', 'T2.id', '=', 'T1.messenger_group_id')
+        ->where('T1.account_id', '=', $accountId)
+        ->where('T2.payload', '!=', 'support')
+        ->orderBy('T2.updated_at', 'DESC')
+        ->select('T2.*')
+        ->get();
+      $result = json_decode($result, true);
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
+          $lastMessage['payload'] = $result[$i]['title'];
+          $response[] = $lastMessage;
+          $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          $i++;
+        }
+      }else{
+        $response = null;
+      }
+
+      return response()->json(array(
+        'data'  => $response,
+        'error' => null,
+        'total_unread_messages' => $totalUnreadMessages,
+        'timestamps'  => Carbon::now()
+      ));
+    }
     public function createNewIssue(Request $request){
       $data = $request->all();
 
