@@ -30,7 +30,7 @@ class MessengerMessageController extends APIController
         $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         PushNotification::dispatch($data);
-        app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
+        // app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
       }else{
         $error = "Something went wrong";
       }
