@@ -14,11 +14,13 @@ class MessengerMessageController extends APIController
 {
 
     public $msFileClass = 'Increment\Messenger\Http\MessengerMessageFileController';
+    public $requestValidationClass = 'App\Http\Controllers\RequestValidationController';
     function __construct(){
-      $this->model = new MessengerMessage;
+      $this->model = new MessengerMessage();
       $this->notRequired = array(
         'payload_value',
-        'status'
+        'status',
+        'message'
       );
     }
 
@@ -47,10 +49,10 @@ class MessengerMessageController extends APIController
 
     public function createWithImages(Request $request){
       $data = $request->all();
-      $data['status'] = 0;
+      $error = null;
       $result = $this->checkIfExist($data['account_id'], $data['payload'], $data['payload_value']);
       $this->response['data'] = $result;
-      if($result == null){
+      if(!$result){
         $this->model = new MessengerMessage();
         $this->insertDB($data);
       }
@@ -60,14 +62,14 @@ class MessengerMessageController extends APIController
         $msFileData = array(
           'messenger_message_id' => $this->response['data'],
           'type'  => 'image',
-          'url' => $data['url']
+          'url' => $data['url'],
+          'created_at' => Carbon::now()
         );
         app($this->msFileClass)->insert($msFileData);
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         PushNotification::dispatch($data);
-        // app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
       }else{
         $error = "Something went wrong";
       }
@@ -98,6 +100,8 @@ class MessengerMessageController extends APIController
           $this->response['data'][$i]['product'] = $this->getMessageByPayload($payload, $payloadValue);
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
           $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y');
+          $this->response['data'][$i]['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result[$i]['id']);
+          $this->response['data'][$i]['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $result[$i]['payload_value']);
           $i++;
         }
       }
