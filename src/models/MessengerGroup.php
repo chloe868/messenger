@@ -7,4 +7,8 @@ class MessengerGroup extends APIModel
 {
     protected $table = 'messenger_groups';
     protected $fillable = ['account_id', 'payload', 'title', 'payload'];
+
+    public function getAccountIdAttribute($value){
+      return intval($value);
+    }
 }
