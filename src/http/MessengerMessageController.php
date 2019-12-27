@@ -68,6 +68,8 @@ class MessengerMessageController extends APIController
         app($this->msFileClass)->insert($msFileData);
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
+        $data['files'] = $msFileData;
+        $data['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $data['payload_value']);
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         PushNotification::dispatch($data);
       }else{
