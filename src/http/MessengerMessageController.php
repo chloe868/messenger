@@ -8,7 +8,7 @@ use Increment\Messenger\Models\MessengerMessage;
 use Increment\Messenger\Models\MessengerGroup;
 use Carbon\Carbon;
 use App\Events\Message;
-use App\Jobs\PushNotification;
+use App\Jobs\Notifications;
 
 class MessengerMessageController extends APIController
 {
@@ -33,7 +33,7 @@ class MessengerMessageController extends APIController
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y');
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
-        PushNotification::dispatch($data);
+        Notifications::dispatch('message', $data->toArray());
         // app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
       }else{
         $error = "Something went wrong";
@@ -71,7 +71,7 @@ class MessengerMessageController extends APIController
         $data['files'] = $msFileData;
         $data['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $data['payload_value']);
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
-        PushNotification::dispatch($data);
+        Notifications::dispatch('message', $data->toArray());
       }else{
         $error = "Something went wrong";
       }
