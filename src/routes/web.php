@@ -28,6 +28,7 @@ $route = env('PACKAGE_ROUTE', '').'/messenger_messages/';
 $controller = 'Increment\Messenger\Http\MessengerMessageController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'create_with_images', $controller."createWithImages");
+Route::post($route.'create_with_image_without_payload', $controller."createWithImageWithoutPayload");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
