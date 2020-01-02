@@ -133,7 +133,7 @@ class MessengerMessageController extends APIController
           $payloadValue = $result[$i]['payload_value'];
           $this->response['data'][$i]['product'] = $this->getMessageByPayload($payload, $payloadValue);
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
-          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y H:i A');
+          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
           $this->response['data'][$i]['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result[$i]['id']);
           $this->response['data'][$i]['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $result[$i]['payload_value']);
           $i++;
@@ -154,7 +154,7 @@ class MessengerMessageController extends APIController
       $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->get();
       if(sizeof($message) > 0){
         $message[0]['account'] = $this->retrieveAccountDetails($message[0]['account_id']);
-        $message[0]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $message[0]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y');
+        $message[0]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $message[0]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
         return $message[0];
       }
       return null;
