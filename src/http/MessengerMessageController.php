@@ -50,7 +50,6 @@ class MessengerMessageController extends APIController
     public function createWithImageWithoutPayload(Request $request){
       $data = $request->all();
       $error = null;
-      $this->response['data'] = $result;
       $this->model = new MessengerMessage();
       $this->insertDB($data);
       
