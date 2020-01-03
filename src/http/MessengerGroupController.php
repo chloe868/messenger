@@ -135,7 +135,7 @@ class MessengerGroupController extends APIController
           'message'             => $message,
           'status'              => 'support',
           'account'             => $this->retrieveAccountDetails($creator),
-          'created_at_human'    =>  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y')
+          'created_at_human'    =>  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A')
         );
 
         broadcast(new Message($messageArray))->toOthers();
