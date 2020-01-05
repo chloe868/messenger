@@ -167,18 +167,7 @@ class MessengerMessageController extends APIController
     public function getLastMessage($messengerGroupId, $accountId = null){
       $message = '';
       $lastMessageAccountId = null;
-      if($accountId != null){
-        $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->where('account_id', '!=', $accountId)->orderBy('created_at', 'desc')->limit(1)->get();
-
-        $lastMessage = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
-        if(sizeof($message) > 0 && sizeof($lastMessage) > 0){
-          $message[0]['message'] = (intval($lastMessage[0]['account_id']) == intval($accountId)) ? 'You: ' .$lastMessage[0]['message'] : $lastMessage[0]['message'];
-          $lastMessageAccountId = $lastMessage[0]['account_id'];
-        }
-      }else{
-        $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
-      }
-      
+      $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
       $response = array();
       if(sizeof($message) > 0){
         $response['title'] = $this->retrieveAccountDetails(($lastMessageAccountId !== null) ? $lastMessageAccountId : $message[0]['account_id']);
