@@ -130,20 +130,39 @@ class MessengerMessageController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $payload = $result[$i]['payload'];
-          $payloadValue = $result[$i]['payload_value'];
-          $this->response['data'][$i]['product'] = $this->getMessageByPayload($payload, $payloadValue);
-          $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
-          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
-          $this->response['data'][$i]['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result[$i]['id']);
-          $this->response['data'][$i]['validations'] = null;
-          if($result[$i]['payload_value'] != null && intval($result[$i]['payload_value']) > 0){
-            $this->response['data'][$i]['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $result[$i]['payload_value']);
-          }
+          $this->response['data'][$i] = $this->manageReponse($result[$i]);
           $i++;
         }
       }
       return $this->response();
+    }
+
+    public function getByParams($column, $value){
+      $result = MessengerMessage::where($column, '=', $value)->get();
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          $result[$i] = $this->manageReponse($result[$i]);
+          $i++;
+        }
+        return $result;
+      }else{
+        return null;
+      }
+    }
+
+    public function manageReponse($result){
+      $payload = $result['payload'];
+      $payloadValue = $result['payload_value'];
+      $result['product'] = $this->getMessageByPayload($payload, $payloadValue);
+      $result['account'] = $this->retrieveAccountDetails($result['account_id']);
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+      $result['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result['id']);
+      $result['validations'] = null;
+      if($payloadValue != null && intval($payloadValue) > 0){
+        $result['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $payloadValue);
+      }
+      return $result;
     }
     
     public function getMessageByPayload($payload, $payloadValue){
