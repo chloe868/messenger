@@ -52,7 +52,8 @@ class MessengerGroupController extends APIController
         foreach ($result as $key) {
           $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
           $response[] = $lastMessage;
-          $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          // $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          $totalUnreadMessages += 0;
           $i++;
         }
       }else{
@@ -87,7 +88,8 @@ class MessengerGroupController extends APIController
           $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $accountId);
           $lastMessage['payload'] = $result[$i]['title'];
           $response[] = $lastMessage;
-          $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          // $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          $totalUnreadMessages += 0;
           $i++;
         }
       }else{
@@ -165,7 +167,8 @@ class MessengerGroupController extends APIController
         foreach ($result as $key) {
           $lastMessage = app('Increment\Messenger\Http\MessengerMessageController')->getLastMessage($result[$i]['id'], $data['account_id']);
           $this->response['data'][$i]['last_message'] = $lastMessage;
-          $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          // $totalUnreadMessages += $lastMessage['total_unread_messages'];
+          $totalUnreadMessages += 0;
           $i++;
         }
       }
