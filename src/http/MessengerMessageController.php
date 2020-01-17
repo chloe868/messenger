@@ -72,11 +72,15 @@ class MessengerMessageController extends APIController
         $data['validations'] = null;
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         Notifications::dispatch('message', $data);
+        $data['sending_flag'] = false;
+        $data['error'] = null;
       }else{
         $error = "Something went wrong";
+        $data['sending_flag'] = false;
+        $data['error'] = $error;
       }
       return response()->json(array(
-        'data' => ($error != null) ? null : $data,
+        'data' => $data,
         'error' => ($error != null) ? array(
           'status' => 400,
           'message' => $error 
@@ -109,11 +113,15 @@ class MessengerMessageController extends APIController
         $data['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $data['payload_value']);
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         Notifications::dispatch('message', $data);
+        $data['sending_flag'] = false;
+        $data['error'] = null;
       }else{
         $error = "Something went wrong";
+        $data['sending_flag'] = false;
+        $data['error'] = $error;
       }
       return response()->json(array(
-        'data' => ($error != null) ? null : $data,
+        'data' => $data,
         'error' => ($error != null) ? array(
           'status' => 400,
           'message' => $error 
