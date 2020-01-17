@@ -34,12 +34,16 @@ class MessengerMessageController extends APIController
         $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         Notifications::dispatch('message', $data);
+        $data['sending_flag'] = false;
+        $data['error'] = null;
         // app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
       }else{
         $error = "Something went wrong";
+        $data['error'] = "Something went wrong";
+        $data['sending_flag'] = false;
       }
       return response()->json(array(
-        'data' => ($error != null) ? null : $data,
+        'data' => $data,
         'error' => ($error != null) ? array(
           'status' => 400,
           'message' => $error 
@@ -143,6 +147,9 @@ class MessengerMessageController extends APIController
         $i = 0;
         foreach ($result as $key) {
           $result[$i] = $this->manageReponse($result[$i]);
+          $result[$i]['code'] = $i;
+          $data['sending_flag'] = false;
+          $data['error'] = null;
           $i++;
         }
         return $result;
