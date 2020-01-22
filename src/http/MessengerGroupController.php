@@ -111,7 +111,7 @@ class MessengerGroupController extends APIController
     }
     public function createNewIssue(Request $request){
       $data = $request->all();
-
+      $this->localization();
       $creator = intval($data['creator']);
       $message = $data['message'];
       $this->model = new MessengerGroup();
@@ -143,7 +143,7 @@ class MessengerGroupController extends APIController
           'message'             => $message,
           'status'              => 'support',
           'account'             => $this->retrieveAccountDetails($creator),
-          'created_at_human'    =>  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A')
+          'created_at_human'    =>  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A')
         );
 
         broadcast(new Message($messageArray))->toOthers();

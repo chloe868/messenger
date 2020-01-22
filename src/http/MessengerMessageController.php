@@ -17,6 +17,7 @@ class MessengerMessageController extends APIController
     public $requestValidationClass = 'App\Http\Controllers\RequestValidationController';
     function __construct(){
       $this->model = new MessengerMessage();
+      $this->localization();
       $this->notRequired = array(
         'payload_value',
         'status',
@@ -31,7 +32,7 @@ class MessengerMessageController extends APIController
       $error = null;
       if($this->response['data'] > 0){
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
-        $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+        $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         Notifications::dispatch('message', $data);
         $data['sending_flag'] = false;
@@ -67,7 +68,7 @@ class MessengerMessageController extends APIController
         );
         app($this->msFileClass)->insert($msFileData);
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
-        $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+        $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $data['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $this->response['data']);
         $data['validations'] = null;
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
@@ -108,7 +109,7 @@ class MessengerMessageController extends APIController
         );
         app($this->msFileClass)->insert($msFileData);
         $data['account'] = $this->retrieveAccountDetails($data['account_id']);
-        $data['created_at_human'] =  Carbon::now()->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+        $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $data['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $this->response['data']);
         $data['validations'] = app($this->requestValidationClass)->getDetailsByParams('id', $data['payload_value']);
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
@@ -171,7 +172,7 @@ class MessengerMessageController extends APIController
       $payloadValue = $result['payload_value'];
       $result['product'] = $this->getMessageByPayload($payload, $payloadValue);
       $result['account'] = $this->retrieveAccountDetails($result['account_id']);
-      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
       $result['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result['id']);
       $result['validations'] = null;
       if($payloadValue != null && intval($payloadValue) > 0){
