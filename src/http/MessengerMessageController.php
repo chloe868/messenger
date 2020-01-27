@@ -150,6 +150,19 @@ class MessengerMessageController extends APIController
       return $this->response();
     }
 
+    public function updateByStatus(Request $request){
+      $data = $request->all();
+      $result = MessengerMessage::where('messenger_group_id', '=', $data['messenger_group_id'])->orderBy('created_at', 'desc')->limit(1)->get();
+      if(sizeof($result) > 0){
+        MessengerMessage::where('id', '=', $result[0]['id'])->update(array(
+          'status' => 1,
+          'updated_at' => Carbon::now()
+        ));
+      }
+      $this->response['data'] = true;
+      return $this->response();
+    }
+
     public function getByParams($column, $value){
       $result = MessengerMessage::where($column, '=', $value)->get();
       if(sizeof($result) > 0){

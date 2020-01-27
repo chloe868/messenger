@@ -31,6 +31,7 @@ Route::post($route.'create_with_images', $controller."createWithImages");
 Route::post($route.'create_with_image_without_payload', $controller."createWithImageWithoutPayload");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
+Route::post($route.'update_by_status', $controller."updateByStatus");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
 
