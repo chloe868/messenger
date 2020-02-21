@@ -13,6 +13,9 @@ use App\Events\Message;
 class MessengerGroupController extends APIController
 {
     function __construct(){
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
+      }
       $this->model = new MessengerGroup();
     }
 
