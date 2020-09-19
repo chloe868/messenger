@@ -26,8 +26,8 @@ class MessengerGroupController extends APIController
 
       if(sizeof($this->response['data']) > 0){
         $i = 0;
-
-        foreach ($variable as $key => $value) {
+        $result = $this->response['data'];
+        foreach ($result as $key => $value) {
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($this->response['data'][$i]['account_id']);
           $i++;
         }
