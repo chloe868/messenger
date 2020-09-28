@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use App\Events\Message;
 class MessengerGroupController extends APIController
 {
+    public $messengerMessagesClass = 'Increment\Messenger\Http\MessengerMessageController';
+
     function __construct(){
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
@@ -191,6 +193,18 @@ class MessengerGroupController extends APIController
 
     public function updateGroupById($id){
       MessengerGroup::where('id', '=', $id)->update(array('updated_at' => Carbon::now()));
+    }
+
+    public function getUnreadMessagesByParams($column, $value, $accountId){
+      $result = MessengerGroup::where($column, '=', $value)->get();
+      if(sizeof($result) > 0){
+        return array(
+          'unread'  => app($this->messengerMessagesClass)->getTotalUnreadMessages($result[0]['id'], $accountId),
+          'messenger_group_id'  => $result[0]['id']
+        );
+      }else{
+        return null;
+      }
     }
 
 }
