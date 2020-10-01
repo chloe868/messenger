@@ -44,7 +44,10 @@ class MessengerMessageController extends APIController
         $data['sending_flag'] = false;
       }
       return response()->json(array(
-        'data' => $data,
+        'data' => array(
+          'created_at_human'  => $data['created_at_human'],
+          'id'  => $this->response['data']
+        ),
         'error' => ($error != null) ? array(
           'status' => 400,
           'message' => $error 
