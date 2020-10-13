@@ -223,6 +223,15 @@ class MessengerMessageController extends APIController
       }
       return $result;
     }
+
+    public function manageBasicReponse($result){
+      $payload = $result['payload'];
+      $payloadValue = $result['payload_value'];
+      $result['account'] = $this->retrieveAccountDetailsProfileOnly($result['account_id']);
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+      $result['files'] = app($this->msFileClass)->getByParams('messenger_message_id', $result['id']);
+      return $result;
+    }
     
     public function getMessageByPayload($payload, $payloadValue){
       switch($payload){
