@@ -173,7 +173,7 @@ class MessengerMessageController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $this->response['data'][$i] = $this->manageReponse($result[$i]);
+          $this->response['data'][$i] = $this->manageBasicReponse($result[$i]);
           $i++;
         }
       }
