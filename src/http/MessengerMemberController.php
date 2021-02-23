@@ -21,6 +21,7 @@ class MessengerMemberController extends APIController
         $i = 0;
         foreach ($result as $key) {
           $response[] = $result[$i]['account_id'];
+          $i++;
         }
       }
       return $response;
