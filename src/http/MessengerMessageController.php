@@ -14,6 +14,7 @@ class MessengerMessageController extends APIController
 {
 
     public $msFileClass = 'Increment\Messenger\Http\MessengerMessageFileController';
+    public $memberClass = 'Increment\Messenger\Http\MessengerMemberController';
     public $requestValidationClass = 'App\Http\Controllers\RequestValidationController';
     function __construct(){
       $this->model = new MessengerMessage();
@@ -35,6 +36,7 @@ class MessengerMessageController extends APIController
         $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $data['custom_id'] = $data['messenger_group_id'];
         $data['topic'] = $data['message'];
+        $data['members'] = app($this->memberClass)->getMembers($data['messenger_group_id']);
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         $data['title'] = 'New Message';
         Notifications::dispatch('message', $data);
