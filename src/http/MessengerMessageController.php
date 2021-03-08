@@ -203,7 +203,7 @@ class MessengerMessageController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $result[$i] = $this->manageReponse($result[$i]);
+          $result[$i] = $this->manageResponse($result[$i]);
           $result[$i]['code'] = $i;
           $data['sending_flag'] = false;
           $data['error'] = null;
@@ -215,7 +215,7 @@ class MessengerMessageController extends APIController
       }
     }
 
-    public function manageReponse($result){
+    public function manageResponse($result){
       $payload = $result['payload'];
       $payloadValue = $result['payload_value'];
       $result['product'] = $this->getMessageByPayload($payload, $payloadValue);
