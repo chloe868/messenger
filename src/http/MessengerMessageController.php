@@ -32,7 +32,7 @@ class MessengerMessageController extends APIController
       $this->insertDB($data);
       $error = null;
       if($this->response['data'] > 0){
-        $data['account'] = $this->retrieveAccountDetails($data['account_id']);
+        $data['account'] = $this->retrieveAccountDetailsProfileOnly($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $data['custom_id'] = $data['messenger_group_id'];
         $data['topic'] = "message";
@@ -178,7 +178,7 @@ class MessengerMessageController extends APIController
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $this->response['data'][$i] = $this->manageBasicReponse($result[$i]);
+          $this->response['data'][$i] = $this->manageBasicResponse($result[$i]);
           $i++;
         }
       }
@@ -229,7 +229,7 @@ class MessengerMessageController extends APIController
       return $result;
     }
 
-    public function manageBasicReponse($result){
+    public function manageBasicResponse($result){
       $payload = $result['payload'];
       $payloadValue = $result['payload_value'];
       $result['account'] = $this->retrieveAccountDetailsProfileOnly($result['account_id']);
