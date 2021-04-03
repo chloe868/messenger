@@ -32,13 +32,13 @@ class MessengerMessageController extends APIController
       $this->insertDB($data);
       $error = null;
       if($this->response['data'] > 0){
-        $data['account'] = $this->retrieveAccountDetailsProfileOnly($data['account_id']);
+        // $data['account'] = $this->retrieveAccountDetailsOnRequests($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $data['custom_id'] = $data['messenger_group_id'];
         $data['topic'] = "message";
         $data['members'] = json_encode(app($this->memberClass)->getMembers($data['messenger_group_id']));
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
-        $data['title'] = 'New Message';
+        $data['message'] = 'New request posted';
         Notifications::dispatch('message', $data);
         $data['sending_flag'] = false;
         $data['error'] = null;
