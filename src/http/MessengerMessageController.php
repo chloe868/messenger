@@ -31,6 +31,7 @@ class MessengerMessageController extends APIController
       $data['status'] = 0;
       $this->insertDB($data);
       $error = null;
+      $tempMessage = $data;
       if($this->response['data'] > 0){
         // $data['account'] = $this->retrieveAccountDetailsOnRequests($data['account_id']);
         $data['created_at_human'] =  Carbon::now()->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
@@ -49,8 +50,9 @@ class MessengerMessageController extends APIController
         $data['error'] = "Something went wrong";
         $data['sending_flag'] = false;
       }
+      $tempMessage['sending_flag'] = false;
       return response()->json(array(
-        'data' => $data,
+        'data' => $tempMessage,
         'error' => ($error != null) ? array(
           'status' => 400,
           'message' => $error 
