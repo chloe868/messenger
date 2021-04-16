@@ -12,6 +12,8 @@ class MessengerMemberController extends APIController
       $this->model = new MessengerMember();
     }
 
+    public $accountProfileClass = 'Increment\Account\Http\AccountProfileController';
+    public $accountInformationClass = 'Increment\Account\Http\AccountInformationController';
 
     public function getMembers($messengerGroupId){
       $result = MessengerMember::where('messenger_group_id', '=', $messengerGroupId)->get();
@@ -25,5 +27,17 @@ class MessengerMemberController extends APIController
         }
       }
       return $response;
+    }
+
+    public function retrieve(Request $request) {
+      $data = $request->all();
+      $members = MessengerMember::where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
+      ->orderBy('created_at', $data['sort']['created_at'])->get();
+      foreach($members as $i) {
+        $i['profile'] = app($this->accountProfileClass)->getAccountProfile($i['account_id']);
+        $i['information'] = app($this->accountInformationClass)->getAccountInformation($i['account_id']);
+      }
+      $this->response['data'] = $members;
+      return $this->response();
     }
 }

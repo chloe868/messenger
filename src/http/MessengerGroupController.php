@@ -207,4 +207,22 @@ class MessengerGroupController extends APIController
       }
     }
 
+    public function createGroupWithMembers(Request $request) {
+      $data = $request->all();
+      $group = new MessengerGroup;
+      $group->account_id = $data['account_id'];
+      $group->payload = $data['payload'];
+      $group->title = $data['title'];
+      $group->save();
+      foreach($data['members'] as $item) {
+        $member = new MessengerMember;
+        $member->messenger_group_id = $group['id'];
+        $member->account_id = $item['id'];
+        $member->status = $item['id'] === $data['account_id'] ? 'ADMIN' : 'MEMBER';
+        $member->save();
+      }
+      $this->response['data'] = $group['id'];
+      return $this->response();
+    }
+
 }

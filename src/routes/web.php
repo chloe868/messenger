@@ -4,6 +4,7 @@
 $route = env('PACKAGE_ROUTE', '').'/messenger_groups/';
 $controller = 'Increment\Messenger\Http\MessengerGroupController@';
 Route::post($route.'create', $controller."create");
+Route::post($route.'create_group_with_members', $controller."createGroupWithMembers");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'create_new_issue', $controller."createNewIssue");
 Route::post($route.'retrieve', $controller."retrieve");
