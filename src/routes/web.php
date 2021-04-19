@@ -20,6 +20,7 @@ $route = env('PACKAGE_ROUTE', '').'/messenger_members/';
 $controller = 'Increment\Messenger\Http\MessengerMemberController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
+Route::post($route.'retrieve_members', $controller."retrieveMembers");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
