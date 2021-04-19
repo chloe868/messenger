@@ -29,7 +29,7 @@ class MessengerMemberController extends APIController
       return $response;
     }
 
-    public function retrieve(Request $request) {
+    public function retrieveMembers(Request $request) {
       $data = $request->all();
       $members = MessengerMember::where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
       ->orderBy('created_at', $data['sort']['created_at'])->get();
