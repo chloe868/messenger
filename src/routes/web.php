@@ -7,6 +7,7 @@ Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'create_new_issue', $controller."createNewIssue");
 Route::post($route.'retrieve', $controller."retrieve");
+Route::post($route.'retrieve_by_member', $controller."retrieveByMember");
 Route::post($route.'retrieve_summary', $controller."retrieveSummary");
 Route::post($route.'retrieve_summary_payhiram', $controller."retrieveSummaryPayhiram");
 Route::post($route.'retrieve_my_issue', $controller."retrieveMyIssue");

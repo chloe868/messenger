@@ -37,6 +37,29 @@ class MessengerGroupController extends APIController
 
       return $this->response();
     }
+
+    public function retrieveByMember(Request $request){
+      $data = $request->all();
+
+      $temp = DB::table('messenger_group as T1')
+          ->leftJoin('messenger_member as T2', 'T1.id', '=', 'T2.messenger_group_id')
+          ->where('T1.deleted_at', '=', null)
+          ->where('T1.account_id', '=', $data['account_id'])
+          ->get();
+
+      $this->response['data'] = json_decode(json_encode($temp), true);
+      
+      if(sizeof($this->response['data']) > 0){
+        $i = 0;
+        $result = $this->response['data'];
+        foreach ($result as $key => $value) {
+          $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($this->response['data'][$i]['account_id']);
+          $i++;
+        }
+      }
+
+      return $this->response();
+    }
     public function retrieveSummary(Request $request){
       $data = $request->all();
       $accountType = $data['account_type'];
