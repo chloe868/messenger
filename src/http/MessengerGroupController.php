@@ -41,8 +41,8 @@ class MessengerGroupController extends APIController
     public function retrieveByMember(Request $request){
       $data = $request->all();
 
-      $temp = DB::table('messenger_group as T1')
-          ->leftJoin('messenger_member as T2', 'T1.id', '=', 'T2.messenger_group_id')
+      $temp = DB::table('messenger_groups as T1')
+          ->leftJoin('messenger_members as T2', 'T1.id', '=', 'T2.messenger_group_id')
           ->where('T1.deleted_at', '=', null)
           ->where('T1.account_id', '=', $data['account_id'])
           ->get();
@@ -230,6 +230,23 @@ class MessengerGroupController extends APIController
       }
     }
 
+    public function getMembersByParams($column, $value, $returns){
+      $result = MessengerGroup::where($column, '=', $value)->get($returns);
+      if(sizeof($result) > 0){
+        $i=0;
+        $j=0;
+        foreach ($result as $key) {
+          $result[$i]['members'] = MessengerMember::where('meessenger_group_id', '=', $result[$i]['id'])->get();
+          foreach ($result[$i]['members'] as $mem) {
+            $mem['name'] = $this->retrieveNameOnly($mem->account_id);
+            $mem['account'] = $this->retrieveAccountDetailsProfileOnly($mem->account_id);
+            $j++;
+          }
+          $i++;
+        }
+      }
+      $this->response['data'] = $result;
+    }
     public function createGroupWithMembers(Request $request) {
       $data = $request->all();
       $group = new MessengerGroup;
