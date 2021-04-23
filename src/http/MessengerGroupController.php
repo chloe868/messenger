@@ -44,7 +44,7 @@ class MessengerGroupController extends APIController
       $temp = DB::table('messenger_groups as T1')
           ->leftJoin('messenger_members as T2', 'T1.id', '=', 'T2.messenger_group_id')
           ->where('T1.deleted_at', '=', null)
-          ->where('T1.account_id', '=', $data['account_id'])
+          ->where('T2.account_id', '=', $data['account_id'])
           ->get();
 
       $this->response['data'] = json_decode(json_encode($temp), true);
