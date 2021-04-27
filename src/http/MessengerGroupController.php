@@ -242,10 +242,10 @@ class MessengerGroupController extends APIController
             $mem['account'] = $this->retrieveAccountDetailsProfileOnly($mem->account_id);
             $j++;
           }
+          return $result[$i]['members'];
           $i++;
         }
       }
-      $this->response['data'] = $result;
     }
     public function createGroupWithMembers(Request $request) {
       $data = $request->all();
