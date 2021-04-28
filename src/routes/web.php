@@ -12,6 +12,7 @@ Route::post($route.'retrieve_by_member', $controller."retrieveByMember");
 Route::post($route.'retrieve_summary', $controller."retrieveSummary");
 Route::post($route.'retrieve_summary_payhiram', $controller."retrieveSummaryPayhiram");
 Route::post($route.'retrieve_my_issue', $controller."retrieveMyIssue");
+Route::post($route.'update_title', $controller."updateTitle");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
