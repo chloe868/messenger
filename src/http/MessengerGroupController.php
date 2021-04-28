@@ -218,6 +218,13 @@ class MessengerGroupController extends APIController
       MessengerGroup::where('id', '=', $id)->update(array('updated_at' => Carbon::now()));
     }
 
+    public function updateTitle(Request $request){
+      $data = $request->all();
+      MessengerGroup::where('id', '=', $data['id'])->update(array('title' => $data['title'], 'updated_at' => Carbon::now()));
+      $this->response['data'] = true;
+      return $this->response();
+    }
+
     public function getUnreadMessagesByParams($column, $value, $accountId){
       $result = MessengerGroup::where($column, '=', $value)->get();
       if(sizeof($result) > 0){
