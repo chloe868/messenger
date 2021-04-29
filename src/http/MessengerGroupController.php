@@ -262,12 +262,14 @@ class MessengerGroupController extends APIController
       $group->payload = $data['payload'];
       $group->title = $data['title'];
       $group->save();
+      $i = 0;
       foreach($data['members'] as $item) {
         $member = new MessengerMember;
         $member->messenger_group_id = $group['id'];
         $member->account_id = $item['account_id'];
         $member->status = $item['account_id'] === $data['account_id'] ? 'ADMIN' : 'MEMBER';
         $member->save();
+        $i++;
       }
       $this->response['data'] = $group['id'];
       return $this->response();
