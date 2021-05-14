@@ -54,7 +54,7 @@ class MessengerGroupController extends APIController
         $result = $this->response['data'];
         foreach ($result as $key => $value) {
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($this->response['data'][$i]['account_id']);
-          $this->response['data'][$i]['members'] = $this->getMembersProfile('account_id', $this->response['data'][$i]['account_id'], $data);
+          $this->response['data'][$i]['members'] = $this->getMembersProfile($this->response['data'][$i]['messenger_group_id'], $data);
           $i++;
         }
       }
@@ -249,35 +249,15 @@ class MessengerGroupController extends APIController
       }
     }
 
-    public function getMembersProfile($column, $value, $data){
-      $result = MessengerGroup::get();
-      if(sizeof($result) > 0){
-        $i=0;
-        $j=0;
-        $temp = array();
-        foreach ($result as $key) {
-          $admin = MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->where('status', '=', 'ADMIN')->get(['account_id', 'status', 'messenger_group_id']);
-          if(sizeof($admin) > 0){
-            array_push($temp, $admin[0]);
-          }
-          $members =  MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->where('status', '=', 'MEMBER')->limit(2)->get(['account_id', 'status', 'messenger_group_id']);
-          if(sizeof($members) >= 2){
-            array_push($temp, $members[0]);
-            array_push($temp, $members[1]);
-          }else if(sizeof($members) == 1){
-            array_push($temp, $members[0]);
-          }
-          $result[$i]['members'] = $temp;
-          if(sizeof($result[$i]['members']) > 0){
-            foreach ($result[$i]['members'] as $mem) {
-              $mem['profile'] = app('Increment\Account\Http\AccountProfileController')->getAllowedData($mem->account_id);
-              $j++;
-            }
-          }
-          return $result[$i]['members'];
-          $i++;
-        }
+    public function getMembersProfile($groupId, $data){
+      $temp = array();
+      $members =  MessengerMember::where('messenger_group_id', '=', $groupId)->orderBy('id', 'asc')->limit(3)->get(['account_id', 'status', 'messenger_group_id']);
+      $j=0;
+      foreach ($members as $key) {
+        $members[$j]['profile'] = app('Increment\Account\Http\AccountProfileController')->getAllowedData($key['account_id']);
+        $j++;
       }
+      return $members;
     }
 
     public function createGroupWithMembers(Request $request) {
