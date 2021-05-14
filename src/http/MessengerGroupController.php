@@ -250,21 +250,29 @@ class MessengerGroupController extends APIController
     }
 
     public function getMembersProfile($column, $value, $data){
-      $result = MessengerGroup::where($column, '=', $value)->get();
+      $result = MessengerGroup::get();
       if(sizeof($result) > 0){
         $i=0;
         $j=0;
         $temp = array();
         foreach ($result as $key) {
-          $admin = MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->where('account_id', '=',  $result[$i]['account_id'])->where('status', '=', 'ADMIN')->get(['account_id', 'status', 'messenger_group_id']);
-          array_push($temp, $admin[0]);
+          $admin = MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->where('status', '=', 'ADMIN')->get(['account_id', 'status', 'messenger_group_id']);
+          if(sizeof($admin) > 0){
+            array_push($temp, $admin[0]);
+          }
           $members =  MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->where('status', '=', 'MEMBER')->limit(2)->get(['account_id', 'status', 'messenger_group_id']);
-          array_push($temp, $members[0]);
-          array_push($temp, $members[1]);
+          if(sizeof($members) >= 2){
+            array_push($temp, $members[0]);
+            array_push($temp, $members[1]);
+          }else if(sizeof($members) == 1){
+            array_push($temp, $members[0]);
+          }
           $result[$i]['members'] = $temp;
-          foreach ($result[$i]['members'] as $mem) {
-            $mem['profile'] = app('Increment\Account\Http\AccountProfileController')->getAllowedData($mem->account_id);
-            $j++;
+          if(sizeof($result[$i]['members']) > 0){
+            foreach ($result[$i]['members'] as $mem) {
+              $mem['profile'] = app('Increment\Account\Http\AccountProfileController')->getAllowedData($mem->account_id);
+              $j++;
+            }
           }
           return $result[$i]['members'];
           $i++;
