@@ -275,6 +275,20 @@ class MessengerMessageController extends APIController
       return null;
     }
 
+    public function getLastMessages($messengerGroupId, $accountId = null){
+      $message = '';
+      $lastMessageAccountId = null;
+      $message = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->orderBy('created_at', 'desc')->limit(1)->get();
+      $response = array();
+      if(sizeof($message) > 0){
+        $response['title'] = $this->retrieveNameOnly(($lastMessageAccountId !== null) ? $lastMessageAccountId : $message[0]['account_id']);
+        $response['description'] = $message[0]['message'];
+        $response['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $message[0]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+        return $response;
+      }
+      return null;
+    }
+
     public function getTotalUnreadMessages($messengerGroupId, $accountId){
       // status 1 = to read
       $lastReadMessage = MessengerMessage::where('messenger_group_id', '=', $messengerGroupId)->where('status', '=', 1)->orderBy('created_at', 'DESC')->first();
