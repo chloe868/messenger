@@ -44,6 +44,8 @@ class MessengerGroupController extends APIController
           ->leftJoin('messenger_members as T2', 'T1.id', '=', 'T2.messenger_group_id')
           ->where('T1.deleted_at', '=', null)
           ->where('T2.account_id', '=', $data['account_id'])
+          ->skip($data['offset'])
+          ->take($data['limit'])
           ->get();
 
 
@@ -55,6 +57,7 @@ class MessengerGroupController extends APIController
         foreach ($result as $key => $value) {
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($this->response['data'][$i]['account_id']);
           $this->response['data'][$i]['members'] = $this->getMembersProfile($this->response['data'][$i]['messenger_group_id'], $data);
+          $this->response['data'][$i]['last_messege'] = app($this->messengerMessagesClass)->getLastMessages($this->response['data'][$i]['messenger_group_id'], null);
           $i++;
         }
       }
