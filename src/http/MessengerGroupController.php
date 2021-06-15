@@ -263,6 +263,8 @@ class MessengerGroupController extends APIController
         return $result[$i]['members'];
         $i++;
       }
+    }else{
+      return null;
     }
   }
 
