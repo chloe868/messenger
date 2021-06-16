@@ -14,6 +14,7 @@ use App\Events\Message;
 class MessengerGroupController extends APIController
 {
   public $messengerMessagesClass = 'Increment\Messenger\Http\MessengerMessageController';
+  public $messengerMemberClass = 'Increment\Messenger\Http\MessengerMemberController';
 
   function __construct()
   {
@@ -52,9 +53,11 @@ class MessengerGroupController extends APIController
     if (sizeof($result) > 0) {
       $i = 0;
       foreach ($result as $key) {
-        // $result[$i]['account'] = $this->retrieveAccountDetails($key['account_id']);
+        $result[$i]['account'] = $this->retrieveAccountDetails($key['account_id']);
+        $result[$i]['messenger_group_id'] = $key['id'];
         $result[$i]['members'] = $this->getMembersProfile($key['id'], $data);
-        // $result[$i]['last_messege'] = app($this->messengerMessagesClass)->getLastMessages($key['id'], null);
+        $result[$i]['status'] = app($this->messengerMemberClass)->retrieveByParams('messenger_group_id', $key['id'], ['status']);
+        $result[$i]['last_messages'] = app($this->messengerMessagesClass)->getLastMessages($key['id'], null);
         $i++;
       }
       // dd($result);

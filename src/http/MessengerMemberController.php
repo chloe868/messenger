@@ -40,4 +40,9 @@ class MessengerMemberController extends APIController
       $this->response['data'] = $members;
       return $this->response();
     }
+
+    public function retrieveByParams($column, $value, $returns){
+      $result = MessengerMember::where($column, '=', $value)->where('deleted_at', '=', null)->get($returns);
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
 }
