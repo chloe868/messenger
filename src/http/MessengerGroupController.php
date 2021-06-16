@@ -56,7 +56,7 @@ class MessengerGroupController extends APIController
         $result[$i]['account'] = $this->retrieveAccountDetails($key['account_id']);
         $result[$i]['messenger_group_id'] = $key['id'];
         $result[$i]['members'] = $this->getMembersProfile($key['id'], $data);
-        $result[$i]['status'] = app($this->messengerMemberClass)->retrieveByParams('messenger_group_id', $key['id'], ['status']);
+        $result[$i]['status'] = app($this->messengerMemberClass)->retrieveOneByParams('messenger_group_id', $key['id'], 'status');
         $result[$i]['last_messages'] = app($this->messengerMessagesClass)->getLastMessages($key['id'], null);
         $i++;
       }
