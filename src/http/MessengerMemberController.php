@@ -41,8 +41,8 @@ class MessengerMemberController extends APIController
       return $this->response();
     }
 
-    public function retrieveOneByParams($column, $value, $returns){
-      $result = MessengerMember::where($column, '=', $value)->where('deleted_at', '=', null)->get();
+    public function retrieveOneByParams($accountId, $groupId, $returns){
+      $result = MessengerMember::where('messenger_group_id', '=', $groupId)->where('account_id', '=', $accountId)->where('deleted_at', '=', null)->get();
       return sizeof($result) > 0 ? $result[0][$returns] : null;
     }
 }
