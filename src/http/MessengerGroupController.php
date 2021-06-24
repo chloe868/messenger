@@ -45,22 +45,23 @@ class MessengerGroupController extends APIController
   public function retrieveByMember(Request $request)
   {
     $data = $request->all();
-    $result = MessengerGroup::where('account_id', '=', $data['account_id'])->where('deleted_at', '=', null)
-      ->offset($data['offset'])
-      ->limit($data['limit'])
+    $result = DB::table('messenger_groups as T1')
+      ->leftJoin('messenger_members as T2', 'T1.id', '=', 'T2.messenger_group_id')
+      ->where('T1.deleted_at', '=', null)
+      ->where('T2.account_id', '=', $data['account_id'])
+      ->skip($data['offset'])
+      ->take($data['limit'])
       ->get();
-
-    if (sizeof($result) > 0) {
+      if (sizeof($result) > 0) {
       $i = 0;
       foreach ($result as $key) {
-        $result[$i]['account'] = $this->retrieveAccountDetails($key['account_id']);
-        $result[$i]['messenger_group_id'] = $key['id'];
-        $result[$i]['members'] = $this->getMembersProfile($key['id'], $data);
-        $result[$i]['status'] = app($this->messengerMemberClass)->retrieveOneByParams($key['account_id'], $key['id'], 'status');
-        $result[$i]['last_messages'] = app($this->messengerMessagesClass)->getLastMessages($key['id'], null);
+        $key->account = $this->retrieveAccountDetails($key->account_id);
+        $key->messenger_group_id = $key->messenger_group_id;
+        $key->members = $this->getMembersProfile($key->messenger_group_id, $data);
+        $key->status = app($this->messengerMemberClass)->retrieveOneByParams($key->account_id, $key->messenger_group_id, 'status');
+        $key->last_messages = app($this->messengerMessagesClass)->getLastMessages($key->messenger_group_id, null);
         $i++;
       }
-      // dd($result);
       $this->response['data'] = $result;
     }
     return $this->response();
