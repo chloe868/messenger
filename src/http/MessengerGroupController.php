@@ -49,6 +49,7 @@ class MessengerGroupController extends APIController
       ->leftJoin('messenger_members as T2', 'T1.id', '=', 'T2.messenger_group_id')
       ->where('T1.deleted_at', '=', null)
       ->where('T2.account_id', '=', $data['account_id'])
+      ->orderBy('T1.created_at', 'DESC')
       ->skip($data['offset'])
       ->take($data['limit'])
       ->get();
