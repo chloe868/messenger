@@ -56,7 +56,7 @@ class MessengerGroupController extends APIController
       if (sizeof($result) > 0) {
       $i = 0;
       foreach ($result as $key) {
-        $key->account = $this->retrieveAccountDetails($key->account_id);
+        // $key->account = $this->retrieveAccountDetails($key->account_id);
         $key->messenger_group_id = $key->messenger_group_id;
         $key->members = $this->getMembersProfile($key->messenger_group_id, $data);
         $key->status = app($this->messengerMemberClass)->retrieveOneByParams($key->account_id, $key->messenger_group_id, 'status');
