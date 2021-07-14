@@ -303,4 +303,10 @@ class MessengerGroupController extends APIController
     $this->response['data'] = $group['id'];
     return $this->response();
   }
+  
+
+  public function deleteByParams($column, $value){
+    $res = MessengerGroup::where($column, '=', $value)->update(array('deleted_at' => Carbon::now()));
+    return $res;
+  }
 }
