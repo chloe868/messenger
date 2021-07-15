@@ -259,7 +259,7 @@ class MessengerGroupController extends APIController
       $i = 0;
       $j = 0;
       foreach ($result as $key) {
-        $result[$i]['members'] = MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->get();
+        $result[$i]['members'] = MessengerMember::where('messenger_group_id', '=', $result[$i]['id'])->select('account_id', 'id', 'messenger_group_id')->get();
         foreach ($result[$i]['members'] as $mem) {
           $mem['name'] = $this->retrieveNameOnly($mem->account_id);
           $mem['account'] = $this->retrieveAccountDetailsProfileOnly($mem->account_id);
