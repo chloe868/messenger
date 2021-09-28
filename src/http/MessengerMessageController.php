@@ -41,7 +41,7 @@ class MessengerMessageController extends APIController
         $data['members'] = json_encode(app($this->memberClass)->getMembers($data['messenger_group_id']));
         MessengerGroup::where('id', '=', $data['messenger_group_id'])->update(array('updated_at' => Carbon::now()));
         $data['message'] = 'New request posted';
-        Notifications::dispatch('message', $data);
+        Notifications::dispatch('message_group', $data);
         $data['sending_flag'] = false;
         $data['error'] = null;
         // app('App\Http\Controllers\EmailController')->newMessage($data['account_id']);
